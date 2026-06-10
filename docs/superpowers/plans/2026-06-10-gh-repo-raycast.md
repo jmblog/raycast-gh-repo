@@ -517,6 +517,8 @@ npm install
 npm run dev   # ローカル開発拡張として Raycast に登録
 \`\`\`
 
+> `npm run dev` は一度起動すれば拡張が Raycast にインストールされ、`Ctrl+C` で停止しても残り続けます。普段使いでは「初回に一度 `npm run dev` で登録 → `Ctrl+C` で停止 → 以後はそのまま利用」で OK です。コードを変更するときだけ再度 `npm run dev` を起動するとホットリロードが効きます。
+
 Raycast の拡張設定で **Orgs / Users** に対象の org/user を入力する（スペースまたはカンマ区切りで複数可）。
 
 ## 使い方
