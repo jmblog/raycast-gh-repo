@@ -1,0 +1,50 @@
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "gh-repo",
+  "title": "GitHub Repo Search",
+  "description": "Search repositories of given GitHub orgs/users and open them in the browser.",
+  "icon": "icon.png",
+  "author": "jmblog",
+  "categories": [
+    "Developer Tools"
+  ],
+  "license": "MIT",
+  "commands": [
+    {
+      "name": "search-repositories",
+      "title": "Search Repositories",
+      "description": "Search repositories of the configured orgs/users",
+      "mode": "view"
+    }
+  ],
+  "preferences": [
+    {
+      "name": "orgs",
+      "title": "Orgs / Users",
+      "description": "GitHub orgs or users to list repositories for. Separate multiple with spaces or commas.",
+      "type": "textfield",
+      "required": true,
+      "placeholder": "octocat my-org another-user"
+    }
+  ],
+  "dependencies": {
+    "@raycast/api": "^1.70.0",
+    "@raycast/utils": "^1.13.0"
+  },
+  "devDependencies": {
+    "@raycast/eslint-config": "^1.0.6",
+    "@types/node": "^22.19.17",
+    "@types/react": "^19.0.10",
+    "eslint": "^8.51.0",
+    "prettier": "^3.0.3",
+    "typescript": "^5.2.2",
+    "vitest": "^1.2.0"
+  },
+  "scripts": {
+    "build": "ray build -e dist",
+    "dev": "ray develop",
+    "lint": "ray lint",
+    "fix-lint": "ray lint --fix",
+    "test": "vitest run"
+  }
+}
