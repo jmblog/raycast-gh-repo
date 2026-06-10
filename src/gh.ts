@@ -1,3 +1,11 @@
+import { execFile } from "node:child_process";
+import { promisify } from "node:util";
+
+const execFileAsync = promisify(execFile);
+
+// Raycast launches scripts with a minimal PATH; augment it so `gh` is found.
+const GH_PATH = `/opt/homebrew/bin:/usr/local/bin:${process.env.PATH ?? ""}`;
+
 export type Repository = {
   name: string;
   nameWithOwner: string;
@@ -22,4 +30,28 @@ export function parseRepoList(json: string): Repository[] {
     description: r.description ?? "",
     url: r.url,
   }));
+}
+
+/** Run `gh repo list` for each org/user and return the merged repository list. */
+export async function fetchRepositories(orgs: string[]): Promise<Repository[]> {
+  const results = await Promise.all(
+    orgs.map(async (org) => {
+      const { stdout } = await execFileAsync(
+        "gh",
+        [
+          "repo",
+          "list",
+          org,
+          "--limit",
+          "1000",
+          "--no-archived",
+          "--json",
+          "name,nameWithOwner,description,url",
+        ],
+        { env: { ...process.env, PATH: GH_PATH }, maxBuffer: 10 * 1024 * 1024 },
+      );
+      return parseRepoList(stdout);
+    }),
+  );
+  return results.flat();
 }
