@@ -3,7 +3,6 @@ import { promisify } from "node:util";
 
 const execFileAsync = promisify(execFile);
 
-
 export type Repository = {
   name: string;
   nameWithOwner: string;
@@ -15,14 +14,18 @@ export type Repository = {
 export function parseRepoList(json: string): Repository[] {
   const raw = JSON.parse(json) as unknown;
   if (!Array.isArray(raw)) {
-    throw new Error("Unexpected gh output: expected a JSON array of repositories");
+    throw new Error(
+      "Unexpected gh output: expected a JSON array of repositories",
+    );
   }
-  return (raw as Array<{
-    name: string;
-    nameWithOwner: string;
-    description: string | null;
-    url: string;
-  }>).map((r) => ({
+  return (
+    raw as Array<{
+      name: string;
+      nameWithOwner: string;
+      description: string | null;
+      url: string;
+    }>
+  ).map((r) => ({
     name: r.name,
     nameWithOwner: r.nameWithOwner,
     description: r.description ?? "",
@@ -31,12 +34,28 @@ export function parseRepoList(json: string): Repository[] {
 }
 
 /**
- * Run `gh repo list` for each org/user and return the merged repository list.
+ * Return a new array sorted alphabetically by repository name (case-insensitive),
+ * falling back to `nameWithOwner` so the order is stable across owners.
+ */
+export function sortRepositories(repos: Repository[]): Repository[] {
+  return [...repos].sort(
+    (a, b) =>
+      a.name.localeCompare(b.name, undefined, { sensitivity: "base" }) ||
+      a.nameWithOwner.localeCompare(b.nameWithOwner),
+  );
+}
+
+/**
+ * Run `gh repo list` for each org/user and return the merged repository list,
+ * sorted alphabetically by name.
  * Note: capped at 1000 repos per org (gh's `--limit`); larger orgs are truncated.
  */
 export async function fetchRepositories(orgs: string[]): Promise<Repository[]> {
   // Raycast launches scripts with a minimal PATH; augment it so `gh` is found.
-  const env = { ...process.env, PATH: `/opt/homebrew/bin:/usr/local/bin:${process.env.PATH ?? ""}` };
+  const env = {
+    ...process.env,
+    PATH: `/opt/homebrew/bin:/usr/local/bin:${process.env.PATH ?? ""}`,
+  };
   const results = await Promise.all(
     orgs.map(async (org) => {
       try {
@@ -62,5 +81,5 @@ export async function fetchRepositories(orgs: string[]): Promise<Repository[]> {
       }
     }),
   );
-  return results.flat();
+  return sortRepositories(results.flat());
 }
