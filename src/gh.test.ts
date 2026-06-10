@@ -36,4 +36,8 @@ describe("parseRepoList", () => {
   it("returns an empty array for an empty list", () => {
     expect(parseRepoList("[]")).toEqual([]);
   });
+
+  it("throws when the payload is not an array", () => {
+    expect(() => parseRepoList('{"not":"an array"}')).toThrow();
+  });
 });

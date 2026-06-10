@@ -7,13 +7,16 @@ export type Repository = {
 
 /** Parse the JSON array printed by `gh repo list --json ...`. */
 export function parseRepoList(json: string): Repository[] {
-  const raw = JSON.parse(json) as Array<{
+  const raw = JSON.parse(json) as unknown;
+  if (!Array.isArray(raw)) {
+    throw new Error("Unexpected gh output: expected a JSON array of repositories");
+  }
+  return (raw as Array<{
     name: string;
     nameWithOwner: string;
     description: string | null;
     url: string;
-  }>;
-  return raw.map((r) => ({
+  }>).map((r) => ({
     name: r.name,
     nameWithOwner: r.nameWithOwner,
     description: r.description ?? "",
