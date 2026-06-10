@@ -1,40 +1,44 @@
+English | [日本語](README.ja.md)
+
 # GitHub Repo Search (Raycast)
 
-[hokaccha/alfred-workflow-gh-repo](https://github.com/hokaccha/alfred-workflow-gh-repo) の Raycast 版。
-設定した GitHub の org / user のリポジトリ一覧を検索し、ブラウザで開く / URL をコピーする。
+A Raycast port of [hokaccha/alfred-workflow-gh-repo](https://github.com/hokaccha/alfred-workflow-gh-repo).
+Search the repositories of configured GitHub orgs/users and open them in the browser or copy their URL.
 
-## 必要なもの
+## Requirements
 
 - [Raycast](https://raycast.com/)
-- [GitHub CLI](https://cli.github.com/)（`brew install gh`）— `gh auth login` で認証済みにしておく
+- [GitHub CLI](https://cli.github.com/) (`brew install gh`) — sign in with `gh auth login`
 
-## セットアップ
+## Setup
 
 ```bash
 npm install
-npm run dev   # ローカル開発拡張として Raycast に登録
+npm run dev   # register as a local development extension in Raycast
 ```
 
-> `npm run dev` は一度起動すれば拡張が Raycast にインストールされ、`Ctrl+C` で停止しても残り続けます。普段使いでは「初回に一度 `npm run dev` で登録 → `Ctrl+C` で停止 → 以後はそのまま利用」で OK です。コードを変更するときだけ再度 `npm run dev` を起動するとホットリロードが効きます。
+> Once you run `npm run dev`, the extension is installed into Raycast and stays there even after you stop it with `Ctrl+C`. For everyday use: run `npm run dev` once to register, stop it with `Ctrl+C`, and keep using it as is. Run `npm run dev` again only when you change the code — it enables hot reload.
 
-Raycast の拡張設定で **Orgs / Users** に対象の org/user を入力する（スペースまたはカンマ区切りで複数可）。
+In the extension preferences, set **Orgs / Users** to the orgs/users you want to list (separate multiple entries with spaces or commas).
 
-## 使い方
+## Usage
 
-- Raycast で「Search Repositories」を開くとリポジトリ一覧が出る
-- 名前 / `owner/name` で絞り込み（Raycast 標準のファジー検索）
-- Enter: ブラウザで開く
-- Cmd+Enter: URL をコピー
+- Open "Search Repositories" in Raycast to see the repository list
+- Filter by name or `owner/name` (Raycast's built-in fuzzy search)
+- Enter: open in the browser
+- Cmd+Enter: copy the URL
 
-## 仕組み
+Repositories are listed alphabetically by name (typing a query lets Raycast reorder them by match score).
 
-- `gh repo list <org> --no-archived --json name,nameWithOwner,description,url` で取得
-- `useCachedPromise`（stale-while-revalidate）でキャッシュを即表示しつつ裏で更新
+## How it works
 
-## 開発
+- Fetches via `gh repo list <org> --no-archived --json name,nameWithOwner,description,url`
+- Uses `useCachedPromise` (stale-while-revalidate) to show cached data instantly while refreshing in the background
+
+## Development
 
 ```bash
-npm test      # ユニットテスト (vitest)
-npm run lint  # Lint (ray lint)
-npm run build # ビルド (ray build)
+npm test      # unit tests (vitest)
+npm run lint  # lint (ray lint)
+npm run build # build (ray build)
 ```
