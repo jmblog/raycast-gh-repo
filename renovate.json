@@ -1,6 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended"],
+  "extends": ["config:recommended", "helpers:pinGitHubActionDigests"],
   "lockFileMaintenance": {
     "enabled": true
   },
@@ -12,8 +12,9 @@
       "automerge": true
     },
     {
-      "description": "Automerge GitHub Actions updates once CI passes",
+      "description": "Automerge non-major GitHub Actions updates once CI passes; majors get a PR for manual review",
       "matchManagers": ["github-actions"],
+      "matchUpdateTypes": ["minor", "patch", "digest"],
       "automerge": true
     }
   ]
