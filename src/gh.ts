@@ -3,8 +3,6 @@ import { promisify } from "node:util";
 
 const execFileAsync = promisify(execFile);
 
-// Raycast launches scripts with a minimal PATH; augment it so `gh` is found.
-const GH_PATH = `/opt/homebrew/bin:/usr/local/bin:${process.env.PATH ?? ""}`;
 
 export type Repository = {
   name: string;
@@ -32,25 +30,36 @@ export function parseRepoList(json: string): Repository[] {
   }));
 }
 
-/** Run `gh repo list` for each org/user and return the merged repository list. */
+/**
+ * Run `gh repo list` for each org/user and return the merged repository list.
+ * Note: capped at 1000 repos per org (gh's `--limit`); larger orgs are truncated.
+ */
 export async function fetchRepositories(orgs: string[]): Promise<Repository[]> {
+  // Raycast launches scripts with a minimal PATH; augment it so `gh` is found.
+  const env = { ...process.env, PATH: `/opt/homebrew/bin:/usr/local/bin:${process.env.PATH ?? ""}` };
   const results = await Promise.all(
     orgs.map(async (org) => {
-      const { stdout } = await execFileAsync(
-        "gh",
-        [
-          "repo",
-          "list",
-          org,
-          "--limit",
-          "1000",
-          "--no-archived",
-          "--json",
-          "name,nameWithOwner,description,url",
-        ],
-        { env: { ...process.env, PATH: GH_PATH }, maxBuffer: 10 * 1024 * 1024 },
-      );
-      return parseRepoList(stdout);
+      try {
+        const { stdout } = await execFileAsync(
+          "gh",
+          [
+            "repo",
+            "list",
+            org,
+            "--limit",
+            "1000",
+            "--no-archived",
+            "--json",
+            "name,nameWithOwner,description,url",
+          ],
+          { env, maxBuffer: 10 * 1024 * 1024 },
+        );
+        return parseRepoList(stdout);
+      } catch (error) {
+        const stderr = (error as { stderr?: string }).stderr?.trim();
+        const message = stderr || (error as Error).message;
+        throw new Error(`gh repo list failed for "${org}": ${message}`);
+      }
     }),
   );
   return results.flat();
