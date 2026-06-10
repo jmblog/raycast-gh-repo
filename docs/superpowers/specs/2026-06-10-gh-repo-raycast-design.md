@@ -33,14 +33,14 @@ Raycast 拡張の標準構成。
 | ユニット | 役割 | 依存 |
 |---|---|---|
 | `search-repositories.tsx` | エントリポイント。`<List>` を描画し、検索・アクションを束ねる | `useRepositories`, `@raycast/api` |
-| `useRepositories` (hook) | `gh` を実行してリポジトリ配列を返す。`useCachedPromise` で stale-while-revalidate | `gh` CLI, `@raycast/utils` |
+| `useRepositories` (hook) | `gh` を `execFile` で実行してリポジトリ配列を返す。`useCachedPromise` で stale-while-revalidate | `gh` CLI, `@raycast/utils` |
 | 設定 (Preferences) | `orgs` 文字列を受け取る | `package.json` の `preferences` |
 
 各ユニットは独立してテスト・理解できる粒度に保つ。`gh` 呼び出しとパース処理は hook に閉じ込め、UI コンポーネントはデータ配列だけを受け取る。
 
 ## データ取得
 
-- `gh` コマンドを実行（`@raycast/utils` の `useExec`、または `child_process` を `useCachedPromise` でラップ）:
+- `gh` コマンドの実行は `child_process.execFile`（`util.promisify` でラップ）で行い、それを `useCachedPromise` に渡してキャッシュ・再取得を任せる（`useExec` は永続キャッシュを持たないため、キャッシュ方針と整合する `useCachedPromise` に一本化する）:
 
   ```
   gh repo list <org> --limit 1000 --no-archived \
