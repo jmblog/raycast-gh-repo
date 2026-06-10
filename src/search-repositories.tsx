@@ -6,10 +6,10 @@ import { fetchRepositories } from "./gh";
 export default function Command() {
   const { orgs } = getPreferenceValues<{ orgs: string }>();
 
-  const { data, isLoading, error } = useCachedPromise(
+  const { data, isLoading, error, revalidate } = useCachedPromise(
     (orgsString: string) => fetchRepositories(parseOrgs(orgsString)),
     [orgs],
-    { initialData: [] },
+    { initialData: [], onError: () => {} },
   );
 
   return (
@@ -18,6 +18,11 @@ export default function Command() {
         <List.EmptyView
           title="Failed to fetch repositories"
           description={`Check the Orgs / Users setting and run: gh auth status\n\n${error.message}`}
+          actions={
+            <ActionPanel>
+              <Action title="Retry" onAction={revalidate} />
+            </ActionPanel>
+          }
         />
       ) : (
         data.map((repo) => (
@@ -33,11 +38,7 @@ export default function Command() {
             actions={
               <ActionPanel>
                 <Action.OpenInBrowser url={repo.url} />
-                <Action.CopyToClipboard
-                  title="Copy URL"
-                  content={repo.url}
-                  shortcut={{ modifiers: ["cmd"], key: "enter" }}
-                />
+                <Action.CopyToClipboard title="Copy URL" content={repo.url} />
               </ActionPanel>
             }
           />
