@@ -11,7 +11,12 @@ describe("parseOrgs", () => {
   });
 
   it("handles mixed separators and extra whitespace", () => {
-    expect(parseOrgs(" foo,  bar baz ,qux ")).toEqual(["foo", "bar", "baz", "qux"]);
+    expect(parseOrgs(" foo,  bar baz ,qux ")).toEqual([
+      "foo",
+      "bar",
+      "baz",
+      "qux",
+    ]);
   });
 
   it("returns an empty array for a blank string", () => {

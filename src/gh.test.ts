@@ -64,10 +64,7 @@ describe("sortRepositories", () => {
   });
 
   it("breaks ties on equal names by nameWithOwner", () => {
-    const repos = [
-      repo("api", "zeta/api"),
-      repo("api", "alpha/api"),
-    ];
+    const repos = [repo("api", "zeta/api"), repo("api", "alpha/api")];
     expect(sortRepositories(repos).map((r) => r.nameWithOwner)).toEqual([
       "alpha/api",
       "zeta/api",
