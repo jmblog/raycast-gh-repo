@@ -29,12 +29,14 @@ export default function Command() {
           <List.Item
             key={repo.nameWithOwner}
             title={repo.name}
-            subtitle={
+            // Only title/subtitle/keywords are fuzzy-matched. Keep them short and ASCII:
+            // the description lives in accessories so it is shown but never scanned.
+            subtitle={repo.nameWithOwner}
+            accessories={
               repo.description
-                ? `${repo.nameWithOwner} — ${repo.description}`
-                : repo.nameWithOwner
+                ? [{ text: repo.description, tooltip: repo.description }]
+                : undefined
             }
-            keywords={[repo.nameWithOwner]}
             actions={
               <ActionPanel>
                 <Action.OpenInBrowser url={repo.url} />
