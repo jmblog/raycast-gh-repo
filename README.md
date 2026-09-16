@@ -7,14 +7,17 @@ Search the repositories of configured GitHub orgs/users and open them in the bro
 
 ## Requirements
 
-- [Raycast](https://raycast.com/)
+- [Raycast](https://raycast.com/) or [Tinycast](https://abue-ammar.github.io/tinycast/)
 - [GitHub CLI](https://cli.github.com/) (`brew install gh`) — sign in with `gh auth login`
 
 ## Setup
 
 ```bash
 npm install
-npm run dev   # register as a local development extension in Raycast
+# register as a local development extension in Raycast
+npm run dev
+# or register in Tinycast
+npm run dev:tinycast
 ```
 
 > Once you run `npm run dev`, the extension is installed into Raycast and stays there even after you stop it with `Ctrl+C`. For everyday use: run `npm run dev` once to register, stop it with `Ctrl+C`, and keep using it as is. Run `npm run dev` again only when you change the code — it enables hot reload.
