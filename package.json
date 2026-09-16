@@ -42,7 +42,9 @@
   },
   "scripts": {
     "build": "ray build -e dist",
+    "build:tinycast": "node scripts/build-tinycast.mjs",
     "dev": "ray develop",
+    "dev:tinycast": "node scripts/build-tinycast.mjs --watch",
     "lint": "ray lint",
     "fix-lint": "ray lint --fix",
     "test": "vitest run"

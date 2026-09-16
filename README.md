@@ -21,6 +21,19 @@ npm run dev   # register as a local development extension in Raycast
 
 In the extension preferences, set **Orgs / Users** to the orgs/users you want to list (separate multiple entries with spaces or commas).
 
+### Tinycast
+
+[Tinycast](https://github.com/abue-ammar/tinycast) runs Raycast extensions from `~/Library/Application Support/com.tinycast.app/extensions/`. It does not support `ray develop`, so the extension is built straight into that directory instead:
+
+```bash
+npm run build:tinycast   # build once into Tinycast's extensions directory
+npm run dev:tinycast     # rebuild whenever src/ or package.json changes
+```
+
+Tinycast only scans for new extensions on launch, so restart Tinycast after the first build. Subsequent rebuilds overwrite the installed files in place.
+
+Set `TINYCAST_EXTENSIONS_DIR` to override the target directory (for example, for a debug build of Tinycast with a different bundle id).
+
 ## Usage
 
 - Open "Search Repositories" in Raycast to see the repository list
@@ -40,5 +53,6 @@ Repositories are listed alphabetically by name (typing a query lets Raycast reor
 ```bash
 npm test      # unit tests (vitest)
 npm run lint  # lint (ray lint)
-npm run build # build (ray build)
+npm run build # build (ray build) into Raycast's extensions directory
+npm run build:tinycast # build into Tinycast's extensions directory
 ```
