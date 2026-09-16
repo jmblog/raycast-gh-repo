@@ -7,14 +7,17 @@
 
 ## 必要なもの
 
-- [Raycast](https://raycast.com/)
+- [Raycast](https://raycast.com/) または [Tinycast](https://abue-ammar.github.io/tinycast/)
 - [GitHub CLI](https://cli.github.com/)（`brew install gh`）— `gh auth login` で認証済みにしておく
 
 ## セットアップ
 
 ```bash
 npm install
-npm run dev   # ローカル開発拡張として Raycast に登録
+# ローカル開発拡張として Raycast に登録
+npm run dev   
+# もしくは、Tinycast に登録
+npm run dev:tinycast
 ```
 
 > `npm run dev` は一度起動すれば拡張が Raycast にインストールされ、`Ctrl+C` で停止しても残り続けます。普段使いでは「初回に一度 `npm run dev` で登録 → `Ctrl+C` で停止 → 以後はそのまま利用」で OK です。コードを変更するときだけ再度 `npm run dev` を起動するとホットリロードが効きます。
