@@ -1,7 +1,9 @@
 import { ActionPanel, Action, List, getPreferenceValues } from "@raycast/api";
 import { useCachedPromise } from "@raycast/utils";
+import { useMemo, useState } from "react";
 import { parseOrgs } from "./orgs";
 import { fetchRepositories } from "./gh";
+import { rankRepositories } from "./rank";
 
 export default function Command() {
   const { orgs } = getPreferenceValues<{ orgs: string }>();
@@ -12,8 +14,21 @@ export default function Command() {
     { initialData: [], onError: () => {} },
   );
 
+  // Filter and rank here instead of leaving it to the host: hosts differ in
+  // whether they reorder by match quality, so an exact name match could sit
+  // below weaker matches. Providing onSearchTextChange turns host filtering off.
+  const [searchText, setSearchText] = useState("");
+  const repos = useMemo(
+    () => rankRepositories(data, searchText),
+    [data, searchText],
+  );
+
   return (
-    <List isLoading={isLoading}>
+    <List
+      isLoading={isLoading}
+      filtering={false}
+      onSearchTextChange={setSearchText}
+    >
       {error ? (
         <List.EmptyView
           title="Failed to fetch repositories"
@@ -25,12 +40,12 @@ export default function Command() {
           }
         />
       ) : (
-        data.map((repo) => (
+        repos.map((repo) => (
           <List.Item
             key={repo.nameWithOwner}
             title={repo.name}
-            // Only title/subtitle/keywords are fuzzy-matched. Keep them short and ASCII:
-            // the description lives in accessories so it is shown but never scanned.
+            // Search matches name and nameWithOwner only (see rank.ts); the
+            // description is display-only.
             subtitle={repo.nameWithOwner}
             accessories={
               repo.description
