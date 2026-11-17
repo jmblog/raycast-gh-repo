@@ -4,6 +4,10 @@ import { useMemo, useState } from "react";
 import { parseOrgs } from "./orgs";
 import { fetchRepositories } from "./gh";
 import { rankRepositories } from "./rank";
+import { truncateToWidth } from "./text";
+
+// In display columns (wide characters count as two).
+const DESCRIPTION_MAX_WIDTH = 50;
 
 export default function Command() {
   const { orgs } = getPreferenceValues<{ orgs: string }>();
@@ -49,7 +53,15 @@ export default function Command() {
             subtitle={repo.nameWithOwner}
             accessories={
               repo.description
-                ? [{ text: repo.description, tooltip: repo.description }]
+                ? [
+                    {
+                      text: truncateToWidth(
+                        repo.description,
+                        DESCRIPTION_MAX_WIDTH,
+                      ),
+                      tooltip: repo.description,
+                    },
+                  ]
                 : undefined
             }
             actions={
